@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home</title>
+
+        <script>
+            var xhr;
+            var id;
+            var nome;
+            var cognome;
+            var sidi;
+            var tax;
+
+            function output(array, classname, div)
+			{
+                if(!Array.isArray(array))
+                {
+                    array=Array.from(array);
+                }
+				var i=1;
+                for(var element in array)
+                {
+                    var obj = document.createElement("tr");
+                    obj.className = classname;
+                    obj.id=classname+i;
+					
+					for(var property in Object.values(array[element]))
+					{ 
+                        if(property == 0)
+                        {
+                            console.log(Object.values(array[element])[property])
+                            var momentanea = Object.values(array[element])[property];
+                        }
+                        else
+                        {
+                            var td = document.createElement("td");
+                            proprieta = Object.values(array[element])[property];
+                            var text = document.createTextNode(proprieta);
+                            td.appendChild(text);
+                            obj.appendChild(td);
+                            document.getElementById(div).appendChild(obj);
+                            if(property == 4 && classname == "studenti")
+                            {
+                                var td1 = document.createElement("td");
+                                td1.innerHTML = '<button>Edit</button>';
+                                obj.appendChild(td1);
+                                var td2 = document.createElement("td");
+                                td2.innerHTML = '<button onclick="deleteid('+ momentanea +')">Delete</button>';
+                                obj.appendChild(td2);
+                            }
+                            if(property == 2 && classname == "classi")
+                            {
+                                var td1 = document.createElement("td");
+                                td1.innerHTML = '<button>Edit</button>';
+                                obj.appendChild(td1);
+                                var td2 = document.createElement("td");
+                                td2.innerHTML = '<button onclick="deleteidClass('+ momentanea +')">Delete</button>';
+                                obj.appendChild(td2);
+                            }
+                        }
+					}
+					i++;
+                }
+			}
+
+            function get()
+            {
+                xhr = new XMLHttpRequest();
+                xhr.open("GET", 'http://localhost:80/phprest/api.php', true);
+                xhr.onload = function() {
+                    var obj = JSON.parse(xhr.response);
+                    output(obj, "studenti", "contentStudenti");
+                };
+                xhr.onerror = function() { 
+                    alert('Errore');
+                };
+                xhr.send();
+            }
+
+            function getClass()
+            {
+                xhr = new XMLHttpRequest();
+                xhr.open("GETClass", 'http://localhost:80/phprest/api.php', true);
+                xhr.onload = function() {
+                    var obj = JSON.parse(xhr.response);
+                    output(obj, "classi", "contentClassi");
+                };
+                xhr.onerror = function() { 
+                    alert('Errore');
+                };
+                xhr.send();
+            }
+
+            /*function getid()
+            {
+                document.getElementById("contentRisposta").style.display="block";
+
+                id = document.getElementById("inputId").value;
+                xhr = new XMLHttpRequest();
+                xhr.open("GET", 'http://localhost:80/phprest/api.php?id='+id, true);
+                xhr.onload = function()
+                {
+                    document.getElementById('risposta').innerHTML = xhr.response;
+                }
+                xhr.onerror = function()
+                { 
+                    alert('Errore');
+                };
+                xhr.send();
+            }*/
+
+            function deleteid(id)
+            {               
+                xhr = new XMLHttpRequest();
+                xhr.open("DELETE", 'http://localhost:80/phprest/api.php?id='+id, true);
+                xhr.onload = function()
+                {
+                    console.log(xhr.response);
+                }
+                xhr.onerror = function()
+                { 
+                    alert('Errore');
+                };
+                xhr.send();
+            }
+
+            function deleteidClass(id)
+            {               
+                xhr = new XMLHttpRequest();
+                xhr.open("DELETEClass", 'http://localhost:80/phprest/api.php?id='+id, true);
+                xhr.onload = function()
+                {
+                    console.log(xhr.response);
+                }
+                xhr.onerror = function()
+                { 
+                    alert('Errore');
+                };
+                xhr.send();
+            }
+            /*
+            function post()
+            {
+                document.getElementById("contentRisposta").style.display="block";
+
+                nome = document.getElementById("inputNome").value;
+                cognome = document.getElementById("inputCognome").value;
+                sidi = document.getElementById("inputSidi").value;
+                tax = document.getElementById("inputTax").value;
+                xhr = new XMLHttpRequest();
+                xhr.open("POST", 'http://localhost:80/phprest/api.php', true);
+                xhr.onload = function()
+                {
+                    document.getElementById('risposta').innerHTML = xhr.response;
+                }
+                xhr.onerror = function()
+                { 
+                    alert('Errore');
+                };
+                xhr.send(
+                    JSON.stringify({
+                        "name":nome,
+                        "surname":cognome,
+                        "sidi_code":sidi,
+                        "tax_code":tax
+                    })
+                );
+            }
+
+            function patch()
+            {
+                document.getElementById("contentRisposta").style.display="block";
+
+                id = document.getElementById("inputId2").value;
+                nome = document.getElementById("inputNome2").value;
+                cognome = document.getElementById("inputCognome2").value;
+                sidi = document.getElementById("inputSidi2").value;
+                tax = document.getElementById("inputTax2").value;
+                xhr = new XMLHttpRequest();
+                xhr.open("PATCH", 'http://localhost:80/phprest/api.php', true);
+                xhr.onload = function()
+                {
+                    document.getElementById('risposta').innerHTML = xhr.response;
+                }
+                xhr.onerror = function()
+                { 
+                    alert('Errore');
+                };
+                xhr.send(
+                    JSON.stringify({
+                        "id":id,
+                        "name":nome,
+                        "surname":cognome,
+                        "sidi_code":sidi,
+                        "tax_code":tax
+                    })
+                );
+            }
+
+            function put()
+            {
+                document.getElementById("contentRisposta").style.display="block";
+
+                id = document.getElementById("inputId2").value;
+                nome = document.getElementById("inputNome2").value;
+                cognome = document.getElementById("inputCognome2").value;
+                sidi = document.getElementById("inputSidi2").value;
+                tax = document.getElementById("inputTax2").value;
+                xhr = new XMLHttpRequest();
+                xhr.open("PUT", 'http://localhost:80/phprest/api.php', true);
+                xhr.onload = function()
+                {
+                    document.getElementById('risposta').innerHTML = xhr.response;
+                }
+                xhr.onerror = function()
+                { 
+                    alert('Errore');
+                };
+                xhr.send(
+                    JSON.stringify({
+                        "id":id,
+                        "name":nome,
+                        "surname":cognome,
+                        "sidi_code":sidi,
+                        "tax_code":tax
+                    })
+                );
+            }*/
+
+            function stylechangestudenti()
+            {
+                document.getElementById("StudentiTot").style="display: block";
+                document.getElementById("ClassiTot").style="display: none";
+                get();
+            }
+
+            function stylechangeclassi()
+            {
+                document.getElementById("ClassiTot").style="display: block";
+                document.getElementById("StudentiTot").style="display: none";
+            }
+        </script>
+
+        
+        
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    </head>
+    <body onload="getClass();">
+        <div class="page-content-wrapper" id="StudentiTot" style="display: none">
+            <div class="page-content">
+                <h2>Studenti</h2> <h3 onclick="stylechangeclassi()">Classi</h3>
+                <table class="table table-hover" id="tableStudenti">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Cognome</th>
+                            <th scope="col">Sidi_code</th>
+                            <th scope="col">Tax_code</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contentStudenti"></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="page-content-wrapper" id="ClassiTot" style="display: block">
+            <div class="page-content"> 
+                <h2>Classi</h2> <h3 onclick="stylechangestudenti()">Studenti</h3>
+                <table class="table table-hover" id="tableClassi">
+                    <thead>
+                        <tr>
+                            <th scope="col">Anno</th>
+                            <th scope="col">Sezione</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contentClassi"></tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
